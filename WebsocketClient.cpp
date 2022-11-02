@@ -421,7 +421,7 @@ bool WebsocketClient::Connect(std::string const & url)
 	// 进行连接
 	m_WebsocketClient.connect(con);
  
-	std::cout << "Websocket连接成功" << std::endl;
+	//std::cout << "Websocket连接成功" << std::endl;
  
 	// 注意，不能在Websocket连接完成之后马上就发送消息，不然会出现Invalid State的错误，
 	// 导致消息发送不成功，所以在连接成功之后，主线程休眠1秒
@@ -476,32 +476,33 @@ connection_metadata::ptr WebsocketClient::GetConnectionMetadataPtr()
  
 void WebsocketClient::OnOpen(client * c, websocketpp::connection_hdl hdl)
 {
+	cout<<"WSS连接连接成功!"<<endl;
 	if (m_OnOpenFunc != nullptr)
 	{
 		cout<<"调用m_OnOpenFunc"<<endl;
 		m_OnOpenFunc();
 	}
-	cout<<"WSS连接连接成功!"<<endl;
+	
 }
  
 void WebsocketClient::OnFail(client * c, websocketpp::connection_hdl hdl)
 {
+	cout<<"WSS连接连接失败!"<<endl;
 	if (m_OnFailFunc != nullptr)
 	{
 		cout<<"调用m_OnFailFunc"<<endl;
 		m_OnFailFunc();
-	}
-	cout<<"WSS连接连接失败!"<<endl;
+	}	
 }
  
 void WebsocketClient::OnClose(client * c, websocketpp::connection_hdl hdl)
 {
+	cout<<"WSS连接断开!"<<endl;
 	if (m_OnCloseFunc != nullptr)
 	{
 		cout<<"调用m_OnCloseFunc"<<endl;
 		m_OnCloseFunc();
 	}
-	cout<<"WSS连接断开!"<<endl;
 }
  
 void WebsocketClient::OnMessage(websocketpp::connection_hdl, client::message_ptr msg)
