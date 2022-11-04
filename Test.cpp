@@ -84,9 +84,9 @@ void WebsocketMessage::connectionAndLogin()
 }
 void WebsocketMessage::WebsocketInitialization()
 {
-	this->m_httpClientToServer.PutUrl("http://192.168.4.101:8088/cameraLogin");
+	this->m_httpClientToServer.PutUrl("http://159.138.146.46:8088/cameraLogin");
 	this->m_httpClientToCollection.PutUrl("http://192.168.4.162:8080/sendCommand");
-	this->m_websocketClientUrl = "ws://192.168.4.101:8089/ws";
+	this->m_websocketClientUrl = "ws://159.138.146.46:8089/ws";
 
 	//注册回调函数
 	//注册wss连接成功回调函数
