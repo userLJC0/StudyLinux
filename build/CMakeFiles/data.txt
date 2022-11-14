@@ -1,0 +1,5 @@
+https://blog.csdn.net/LvGreat/article/details/103528349
+sudo apt install autoconf automake build-essential libtool pkg-config texi2html yasm cmake curl git mercurial wget gperf ninja-build cargo cargo-c
+
+/home/yaozai/MountDeviceData/Downloads/FFmpeg-master/doc/examples
+

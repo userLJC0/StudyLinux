@@ -24,7 +24,7 @@ struct WebsocketMessage
 	void setMessage(const string &message); // websocket服务器设置收到的数据
 	void WssConnectOpenFun();				// Wss连接成功
 	void WssConnectFailFun();				// Wss连接失败
-	void WebsocketInitialization();			//初始化操作
+	void WebsocketInitialization(string ipToServer,string ipTocollection);	//初始化操作
 	void connectionAndLogin();				// http获取token并且创建wss连接
 };
 void WebsocketMessage::connectionAndLogin()
@@ -40,7 +40,6 @@ void WebsocketMessage::connectionAndLogin()
 		bool m_isSuccess = false;
 		while (m_index--) {
 			if (m_httpClientToServer.SendMessage(m_strnDataToServer)) {
-				// cout<<"HTTP数据发送成功!"<<endl;
 				m_isSuccess = true;
 				break;
 			}
@@ -50,7 +49,6 @@ void WebsocketMessage::connectionAndLogin()
 		if (m_isSuccess == false) {
 			std::cout << "HTTP数据发送失败!退出程序" << endl;
 			exit(0);
-			// return ;
 		}
 	}
 	{
@@ -58,7 +56,12 @@ void WebsocketMessage::connectionAndLogin()
 		cout << "HTTP数据发送成功! 接收到的数据为：" << m_strDataFromServer << endl;
 		json m_jsonDataFromServer = stringToJson(m_strDataFromServer);
 		m_jsonDataToServer.clear();
-		m_jsonDataToServer["token"] = m_jsonDataFromServer["token"];
+		
+
+		// m_jsonDataToServer["token"] = m_jsonDataFromServer["token"];
+		m_jsonDataToServer["token"] = "123";
+
+		
 		this->m_websocketClientObject.Connect(m_websocketClientUrl);
 		if (this->isOnConnection_ == false) {
 			cout << "Wss连接失败!正在尝试重新连接........" << endl;
@@ -79,14 +82,14 @@ void WebsocketMessage::connectionAndLogin()
 			}
 		}
 		this->m_websocketClientObject.Send(m_jsonDataToServer.dump()); // WSS 发送token
-		cout << "------------------" << endl;
 	}
 }
-void WebsocketMessage::WebsocketInitialization()
-{
-	this->m_httpClientToServer.PutUrl("http://159.138.146.46:8088/cameraLogin");
-	this->m_httpClientToCollection.PutUrl("http://192.168.4.162:8080/sendCommand");
-	this->m_websocketClientUrl = "ws://159.138.146.46:8089/ws";
+void WebsocketMessage::WebsocketInitialization(string ipToServer,string ipTocollection)
+{//159.138.146.46
+//192.168.4.162
+	this->m_httpClientToServer.PutUrl("http://" + ipToServer + ":8088/cameraLogin");
+	this->m_httpClientToCollection.PutUrl("http://" + ipTocollection + ":8080/sendCommand");
+	this->m_websocketClientUrl = "ws://" + ipToServer + ":8089/ws";
 
 	//注册回调函数
 	//注册wss连接成功回调函数
@@ -113,7 +116,6 @@ void WebsocketMessage::setMessage(const string &message)
 	this->messageFromServer_ = message;
 	int pos = message.find("LOGIN");
 	if (pos != -1) {
-		// cout<<"接收到的WSS数据stringToJson----------"<< message <<endl;
 		json m_jsonDataFromServer = stringToJson(message);
 		int m_resultCode = m_jsonDataFromServer["resultCode"];
 		cout << "message :" << message << endl;
@@ -124,57 +126,6 @@ void WebsocketMessage::setMessage(const string &message)
 			cout << "与服务器创建wss失败! 正在向服务器请求token重新连接......." << endl;
 
 			this->connectionAndLogin();
-
-			// 	json m_jsonDataToServer;
-			// 	m_jsonDataToServer["deviceUuid"] = "device_uid";
-			// 	m_jsonDataToServer["deviceSecret"] = "device_secret";
-			// 	string	m_strnDataToServer = m_jsonDataToServer.dump();
-			// 	cout<<"HTTP向客户端发送数据 : "<<m_strnDataToServer<<endl;
-			// 	if(m_httpClientToServer.SendMessage(m_strnDataToServer) == false) {
-			// 		cout<<"HTTP数据发送失败!正在尝试重新发送........"<<endl;
-			// 		int m_index = 3 ; bool m_isSuccess=false;
-			// 		while(m_index--) {
-			// 		if(m_httpClientToServer.SendMessage(m_strnDataToServer)) {
-			// 			//cout<<"HTTP数据发送成功!"<<endl;
-			// 			m_isSuccess=true;
-			// 			break;
-			// 		} else std::cout<<"HTTP数据发送失败!正在尝试重新发送........"<<endl;
-			// 		}
-			// 	if(m_isSuccess == false) {
-			// 		std::cout<<"HTTP数据发送失败!退出程序"<<endl;
-			// 		exit(0);
-			// 		//return ;
-			// 	}
-			// 	}
-			// 	{
-			// 		string 	m_strDataFromServer = m_httpClientToServer.GetReciveMessage();
-			// 		cout<<"HTTP数据发送成功! 接收到的数据为："<<m_strDataFromServer<<endl;
-			// 		cout<<"接收到的HTTP数据stringToJson----------"<<m_strDataFromServer<<endl;
-			// 		m_jsonDataFromServer = stringToJson(m_strDataFromServer);
-			// 		m_jsonDataToServer.clear();
-			// 		m_jsonDataToServer["token"] = m_jsonDataFromServer["token"];
-			// 		this->m_websocketClientObject.Connect(m_websocketClientUrl);
-			// 		if(this->isOnConnection_ == false ) {
-			// 			cout<<"Wss连接失败!正在尝试重新连接........"<<endl;
-			// 			int m_index = 3 ;
-			// 			bool m_isSuccess=false;
-			// 			while(m_index--) {
-			// 				this->m_websocketClientObject.Connect(m_websocketClientUrl);
-			// 				if(this->isOnConnection_) {
-			// 					cout<<"Wss重新连接成功!"<<endl;
-			// 					 m_isSuccess = true;
-			// 					break;
-			// 				}
-			// 			}
-			// 			if(m_isSuccess == false) {
-			// 				cout<<"----------------------------------------"<<endl;
-			// 				cout<<"Wss连接失败!退出程序"<<endl;
-			// 				exit(0);
-			// 			}
-			// 		}
-			// 		this->m_websocketClientObject.Send(m_jsonDataToServer.dump());//WSS 发送token
-			// 		cout<<"------------------"<<endl;
-			// 	}
 		}
 		else if (m_resultCode == 0) // wss创建成功
 		{
@@ -223,11 +174,13 @@ void WebsocketMessage::WssConnectFailFun()
 int main()
 {
 	WebsocketMessage m_ServerMessage(false, false, false, "", "");
+	string ipToserver="159.138.146.46";
+	string ipToCollection="192.168.4.162";
+	cout<<"请输入服务器ip地址:"; cin >> ipToserver;
+	cout<<"请输入采集端ip地址:"; cin >> ipToCollection;
 
-	m_ServerMessage.WebsocketInitialization();
-
+	m_ServerMessage.WebsocketInitialization(ipToserver,ipToCollection);
 	m_ServerMessage.connectionAndLogin();
-
 	while (true) ;
 
 	m_ServerMessage.m_websocketClientObject.Close();
